@@ -66,4 +66,14 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus };
+const deleteOrder = async (req, res) => {
+  const {id} = req.params;
+  const order = await Order.findByPk(id);
+  if (!order) {
+    return res.status(404).json({ error: "Pedido não encontrado." });
+  }
+  await order.destroy();
+  res.json({ message: "Pedido deletado com sucesso" });
+}
+
+module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder};
