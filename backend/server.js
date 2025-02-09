@@ -1,20 +1,24 @@
-const express = require("express");
-const { sequelize } = require("./models");
+const express = require('express');
+const cors = require('cors');
+const {sequelize} = require('./models');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const orderItemRoutes = require('./routes/orderItemRoutes');
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
-const testConnection = async () => {
-    try {
-      await sequelize.authenticate();
-      console.log("Connected to the database.");
-    } catch (error) {
-      console.error("Error connecting to the database.", error);
-    }
-  }
-testConnection();
+app.use('/products', productRoutes);
+app.use('/orders', orderRoutes);
+app.use('/orderItems', orderItemRoutes);
+
+sequelize.authenticate().then(() => {
+    console.log('Conexão com o banco de dados estabelecida com sucesso.');
+}).catch((error) => {
+    console.error('Erro ao conectar com o banco de dados:', error);
+});
 
 app.listen(3000, () => {
-  console.log("Server is running on port 3000.");
+    console.log('Servidor rodando na porta 3000');
 });

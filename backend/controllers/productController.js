@@ -23,8 +23,8 @@ const deleteProduct = async (req,res) => {
     try {
         const {id} = req.params;
         await Product.destroy({where: {id}});
-        req.json({message: "Produto deletado com sucesso" , error})
-    } catch {
+        res.json({message: "Produto deletado com sucesso"})
+    } catch (error) {
         res.status(500).json({error: "Erro ao deletar produto", error});
     }
 };
@@ -39,4 +39,17 @@ const updateProduct = async (req,res) => {
         res.status(500).json({error: "Erro ao atualizar produto", error});
     }
 };
-module.exports = { createProduct, getAllProducts, deleteProduct, updateProduct};
+
+
+const getProductById = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const product = await Product.findByPk(id);
+        if (!product) return res.status(404).json({error: "Produto não encontrado"});
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({error: "Erro ao buscar produto", error});
+}
+};
+
+module.exports = { createProduct, getAllProducts, deleteProduct, updateProduct, getProductById};

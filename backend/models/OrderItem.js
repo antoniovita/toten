@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database");
+const sequelize = require("../config/db");
 const Order = require("./Order");
 const Product = require("./Product");
 
@@ -33,9 +33,16 @@ const OrderItem = sequelize.define("OrderItem", {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
-});
+},
 
-// Definir relacionamentos
+{
+    tableName: "order_items",
+    timestamps: true,
+}
+
+);
+
+
 Order.hasMany(OrderItem, { foreignKey: "order_id", onDelete: "CASCADE" });
 OrderItem.belongsTo(Order, { foreignKey: "order_id" });
 
