@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function MenuPage() {
   const [products, setProducts] = useState([]);
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, updateCartQuantity } = useContext(CartContext);
   const [addedProductId, setAddedProductId] = useState(null);
   const [quantities, setQuantities] = useState({});
+  const location = useLocation();
+  const { name, tableNumber } = location.state || {};
 
   useEffect(() => {
     axios.get("http://localhost:3000/products").then((response) => {
@@ -17,10 +19,8 @@ export default function MenuPage() {
 
   const handleAddToCart = (product) => {
     const quantity = quantities[product.id] || 1;
-    for (let i = 0; i < quantity; i++) {
-      addToCart(product);
-      console.log("Adicionado ao carrinho", product);
-    }
+    addToCart(product);
+    updateCartQuantity(product.id, quantity);
     setAddedProductId(product.id);
     setTimeout(() => {
       setAddedProductId(null);
@@ -37,7 +37,7 @@ export default function MenuPage() {
   const handleDecreaseQuantity = (productId) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [productId]: Math.max((prevQuantities[productId] || 1) - 1, 0),
+      [productId]: Math.max((prevQuantities[productId] || 1) - 1, 1),
     }));
   };
 
@@ -61,6 +61,10 @@ export default function MenuPage() {
             </svg>
           </Link>
         </div>
+      </div>
+
+      <div className="mb-4">
+        <p className="text-lg">Bem-vindo, {name}! Mesa: {tableNumber}</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">

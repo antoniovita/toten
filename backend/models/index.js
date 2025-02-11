@@ -1,11 +1,28 @@
-const sequelize = require("../config/db");
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const Product = require("./Product");
-const Order = require("./Order");
-const OrderItem = require("./OrderItem");
+const Product = require('./Product')(sequelize, DataTypes);
+const Order = require('./Order')(sequelize, DataTypes);
+const OrderItem = require('./OrderItem')(sequelize, DataTypes);
+const Table = require('./Table')(sequelize, DataTypes);
 
-sequelize.sync({ force: false }).then(() => {
-  console.log("Banco de dados inicializado.");
+const models = {
+  Product,
+  Order,
+  OrderItem,
+  Table
+};
+
+Object.keys(models).forEach(modelName => {
+  if (models[modelName].associate) {
+    models[modelName].associate(models);
+  }
+});
+
+sequelize.sync({ alter: true }).then(() => {
+  console.log("Banco de dados sincronizado.");
+}).catch(error => {
+  console.error("Erro ao sincronizar o banco de dados:", error);
 });
 
 module.exports = {
@@ -13,4 +30,5 @@ module.exports = {
   Product,
   Order,
   OrderItem,
+  Table
 };

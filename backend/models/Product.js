@@ -1,9 +1,5 @@
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/db");
-
-const Product = sequelize.define(
-  "Product",
-  {
+module.exports = (sequelize, DataTypes) => {
+  const Product = sequelize.define("Product", {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -30,13 +26,18 @@ const Product = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true
     }
-  },
-
-  {
+  }, {
     tableName: "products",
     timestamps: true
-  }
-  
-);
+  });
 
-module.exports = Product;
+  Product.associate = (models) => {
+    Product.hasMany(models.OrderItem, {
+      foreignKey: "product_id",
+      as: "orderItems",
+      onDelete: "CASCADE"
+    });
+  };
+
+  return Product;
+};
