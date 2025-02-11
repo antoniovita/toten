@@ -76,4 +76,32 @@ const deleteOrder = async (req, res) => {
   res.json({ message: "Pedido deletado com sucesso" });
 }
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder};
+const getOrderById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const order = await Order.findByPk(id, {
+      include: [
+        {
+          model: OrderItem,
+          as: 'items',
+          include: [
+            {
+              model: Product,
+              as: 'product'
+            }
+          ]
+        }
+      ]
+    });
+    if (order) {
+      res.json(order);
+    } else {
+      res.status(404).json({ error: 'Order not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching order', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder, getOrderById};

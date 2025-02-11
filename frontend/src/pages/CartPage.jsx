@@ -60,8 +60,28 @@ export default function CartPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold">Carrinho</h1>
-      <Link to="/" className="text-blue-500 underline">Voltar ao Menu</Link>
+      <div className="flex justify-between">
+        <h1 className="text-2xl font-bold ml-20">Carrinho</h1>
+        <div className="flex justify-around gap-10 mr-20">
+          <Link to={"/"}>
+          <h1 className="text-2xl font-bold mb-4 text-center text-blue-500 my-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-utensils">
+              <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+              <path d="M7 2v20"/>
+              <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+            </svg>
+          </h1>
+          </Link>
+          <Link to="/cart" className="text-blue-500 underline my-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart">
+              <circle cx="8" cy="21" r="1"/>
+              <circle cx="19" cy="21" r="1"/>
+              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+            </svg>
+          </Link>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         {cartItems.map(item => (
           <div key={item.id} className="border p-4 rounded-lg">

@@ -1,37 +1,49 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
-const Order = sequelize.define("Order", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
+const Order = sequelize.define('Order', {
   order_number: {
-    type: DataTypes.STRING(20),
-    allowNull: false,
+    type: DataTypes.STRING,
     unique: true,
+    allowNull: false
   },
   total_price: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+    allowNull: false
   },
   status: {
-    type: DataTypes.ENUM("pending", "preparing", "ready", "completed", "canceled"),
-    defaultValue: "pending",
+    type: DataTypes.ENUM('pending', 'preparing', 'ready', 'completed', 'canceled'),
+    defaultValue: 'pending'
   },
-  created_at: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
-},
+  table_number: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'tables',
+      key: 'number'
+    }
+  }
+}, {
+  tableName: 'orders',
+  timestamps: true,
+  createdAt: 'created_at',
+  updatedAt: false
+});
 
-{
-    tableName: "orders",
-    timestamps: false,
-}
+Order.associate = (models) => {
+  Order.belongsTo(models.Table, {
+    foreignKey: 'table_number',
+    as: 'table'
+  });
 
-
-);
+  Order.hasMany(models.OrderItem, {
+    foreignKey: 'order_id',
+    as: 'items'
+  });
+};
 
 module.exports = Order;
