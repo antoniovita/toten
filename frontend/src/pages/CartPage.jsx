@@ -1,12 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function CartPage() {
-  const { cartItems, removeFromCart, updateCartQuantity } = useContext(CartContext);
+  const { cartItems, removeFromCart, updateCartQuantity, clearCart } = useContext(CartContext);
   const [quantities, setQuantities] = useState({});
   const [total, setTotal] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const initialQuantities = {};
@@ -25,10 +26,10 @@ export default function CartPage() {
   const updateQuantityInDB = (productId, quantity) => {
     axios.put(`http://localhost:3000/cart/${productId}`, { quantity })
       .then(response => {
-        console.log('Quantity updated in DB', response.data);
+        console.log('Quantidade alterada no DB.', response.data);
       })
       .catch(error => {
-        console.error('Error updating quantity in DB', error);
+        console.error('Erro na alteração da quantidade.', error);
       });
   };
 
@@ -56,6 +57,33 @@ export default function CartPage() {
       updateCartQuantity(productId, newQuantities[productId]);
       return newQuantities;
     });
+  };
+
+  const createOrder = () => {
+    const orderItems = cartItems.map(item => ({
+      product_id: item.id,
+      quantity: quantities[item.id] || 1,
+      subtotal: (item.price * (quantities[item.id] || 1)).toFixed(2)
+    }));
+
+    const orderData = {
+      total_price: total,
+      status: 'pending',
+      name: localStorage.getItem('name'),
+      table_number: localStorage.getItem('tableNumber'),
+      items: orderItems
+    };
+
+    axios.post('http://localhost:3000/orders', orderData)
+      .then(response => {
+        console.log('Pedido criado com sucesso:', response.data);
+        clearCart();
+        setQuantities({});
+        navigate('/order', { state: { order: response.data } });
+      })
+      .catch(error => {
+        console.error('Erro ao criar o pedido:', error);
+      });
   };
 
   return (
@@ -88,57 +116,48 @@ export default function CartPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
         {cartItems.map(item => (
-          <div key={item.id} className="border p-4 rounded-lg flex flex-direction-row">
+          <div key={item.id} className="border p-4 rounded-lg flex flex-col sm:flex-row">
             
-            <div>
-            <h2 className="text-lg font-semibold">{item.name}</h2>
-            <p className="text-gray-600">{item.description}</p>
-            <p className="font-bold">R$ {item.price}</p>
-            <div className='flex gap-7 items-center'>
-              <button
-                onClick={() => removeFromCart(item.id)}
-                className="mt-2 bg-red-500 text-white px-6 py-2 rounded"
-              >
-                Remover
-              </button>
-              <div className="flex gap-7 items-center mt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full">
+              <div className="flex flex-col sm:flex-row sm:items-center">
+                <img className="w-20 h-20 object-cover mr-4" src={item.image_url} alt={item.name} />
+                <div>
+                  <h2 className="text-lg font-semibold">{item.name}</h2>
+                  <p className="text-gray-600">{item.description}</p>
+                  <p className="font-bold">R$ {item.price}</p>
+                </div>
+              </div>
+              <div className="flex gap-7 items-center mt-2 sm:mt-0">
                 <button
                   onClick={() => handleIncreaseQuantity(item.id)}
                   className="font-bold"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-circle-plus">
-                      <circle cx="12" cy="12" r="10"/>
-                      <path d="M8 12h8"/>
-                      <path d="M12 8v8"/>
-                    </svg>
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 12h8"/>
+                    <path d="M12 8v8"/>
+                  </svg>
                 </button>
-                <p className="font-bold">{quantities[item.id] || 1}</p>
+                <p className="font-bold text-sm">{quantities[item.id] || 1}</p>
                 <button
                   onClick={() => handleDecreaseQuantity(item.id)}
                   className="font-bold"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-circle-minus">
-                      <circle cx="12" cy="12" r="10"/>
-                      <path d="M8 12h8"/>
-                    </svg>
-          
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 12h8"/>
+                  </svg>
                 </button>
-                <p className='font-bold p-2 border rounded-lg'> R$ {(item.price * quantities[item.id]).toFixed(2)}</p>
+                <p className='font-bold p-2 border rounded-lg text-[14px]'> R$ {(item.price * quantities[item.id])}</p>
               </div>
-          </div>
-          
-          </div>
-          
-          <img className="rounded-lg w-40 ml-10" src={item.image_url} alt={item.name} srcset="" />
-
-
-
+            </div>
+            
           </div>
         ))}
       </div>
       <div className="mt-4">
         <p className="font-bold">Total: R$ {total}</p>
-        <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Finalizar Compra</button>
+        <button onClick={createOrder} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded">Finalizar Compra</button>
       </div>
     </div>
   );

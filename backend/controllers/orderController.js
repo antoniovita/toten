@@ -6,11 +6,11 @@ const generateOrderNumber = () => {
 
 const createOrder = async (req, res) => {
   try {
-    const { items } = req.body;
+    const { items, name, table_number } = req.body;
 
     let total_price = 0;
     const order_number = generateOrderNumber();
-    const order = await Order.create({ order_number, total_price });
+    const order = await Order.create({ order_number, total_price, name, table_number });
 
     for (let item of items) {
       const product = await Product.findByPk(item.product_id);
