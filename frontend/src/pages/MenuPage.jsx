@@ -5,15 +5,20 @@ import { Link, useLocation } from "react-router-dom";
 
 export default function MenuPage() {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('Todos');
   const { addToCart, updateCartQuantity } = useContext(CartContext);
   const [addedProductId, setAddedProductId] = useState(null);
   const [quantities, setQuantities] = useState({});
   const location = useLocation();
-  const { name, tableNumber } = location.state || {};
+  const storedName = localStorage.getItem('name');
+  const storedTableNumber = localStorage.getItem('tableNumber');
+  const { name, tableNumber } = location.state || { name: storedName, tableNumber: storedTableNumber };
 
   useEffect(() => {
     axios.get("http://localhost:3000/products").then((response) => {
       setProducts(response.data);
+      setFilteredProducts(response.data);
     });
   }, []);
 
@@ -41,11 +46,21 @@ export default function MenuPage() {
     }));
   };
 
+  const handleFilterChange = (category) => {
+    setSelectedCategory(category);
+    if (category === 'Todos') {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter(product => product.category === category));
+    }
+  };
+
   return (
-    <div className="p-4">
+    <div className="p-10">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold ml-20">Menu</h1>
         <div className="flex justify-around gap-10 mr-20">
+          <Link to={"/menu"}>
           <h1 className="text-2xl font-bold mb-4 text-center text-blue-500 my-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-utensils">
               <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
@@ -53,6 +68,7 @@ export default function MenuPage() {
               <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
             </svg>
           </h1>
+          </Link>
           <Link to="/cart" className="text-blue-500 underline my-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart">
               <circle cx="8" cy="21" r="1"/>
@@ -60,16 +76,30 @@ export default function MenuPage() {
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
             </svg>
           </Link>
+
+          <Link to="/order" className="text-blue-500 underline my-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+          </Link>
+
         </div>
       </div>
 
       <div className="mb-4">
-        <p className="text-lg">Bem-vindo, {name}! Mesa: {tableNumber}</p>
+        <p className="text-lg ml-10">Bem-vindo, {name}! Você está na mesa {tableNumber}.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-        {products.map((product) => (
-          <div key={product.id} className="border p-4 rounded-lg">
+      <div className="mb-4 flex justify-center gap-4">
+        <button onClick={() => handleFilterChange('Todos')} className={`px-4 py-2 rounded ${selectedCategory === 'Todos' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Todos</button>
+        <button onClick={() => handleFilterChange('Hambúrguer')} className={`px-4 py-2 rounded ${selectedCategory === 'Hambúrguer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Hambúrguer</button>
+        <button onClick={() => handleFilterChange('Acompanhamento')} className={`px-4 py-2 rounded ${selectedCategory === 'Acompanhamento' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Acompanhamento</button>
+        <button onClick={() => handleFilterChange('Bebida')} className={`px-4 py-2 rounded ${selectedCategory === 'Bebida' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Bebida</button>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
+        {filteredProducts.map((product) => (
+          <div key={product.id} className="border p-4 rounded-lg flex flex-direction-row">
+
+          <div>
             <h2 className="text-lg font-semibold">{product.name}</h2>
             <p className="text-gray-600">{product.description}</p>
             <p className="font-bold">R$ {product.price}</p>
@@ -102,7 +132,11 @@ export default function MenuPage() {
                   </svg>
                 </button>
               </div>
+              </div>
             </div>
+
+            <img className="rounded-lg w-40 ml-10" src={product.image_url} alt={product.name} srcset="" />
+
           </div>
         ))}
       </div>

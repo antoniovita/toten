@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,11 +8,23 @@ export default function WelcomePage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const storedName = localStorage.getItem('name');
+    const storedTableNumber = localStorage.getItem('tableNumber');
+    if (storedName && storedTableNumber) {
+      setName(storedName);
+      setTableNumber(storedTableNumber);
+      navigate('/menu', { state: { name: storedName, tableNumber: storedTableNumber } });
+    }
+  }, [navigate]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.get(`http://localhost:3000/tables/${tableNumber}`)
       .then(response => {
         if (response.data.exists) {
+          localStorage.setItem('name', name);
+          localStorage.setItem('tableNumber', tableNumber);
           navigate('/menu', { state: { name, tableNumber } });
         } else {
           setError('Número da mesa inválido. Por favor, tente novamente.');

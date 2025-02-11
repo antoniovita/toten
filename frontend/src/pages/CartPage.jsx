@@ -59,7 +59,7 @@ export default function CartPage() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-8">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold ml-20">Carrinho</h1>
         <div className="flex justify-around gap-10 mr-20">
@@ -79,12 +79,18 @@ export default function CartPage() {
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
             </svg>
           </Link>
+
+          <Link to="/order" className="text-blue-500 underline my-1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+          </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
         {cartItems.map(item => (
-          <div key={item.id} className="border p-4 rounded-lg">
+          <div key={item.id} className="border p-4 rounded-lg flex flex-direction-row">
+            
+            <div>
             <h2 className="text-lg font-semibold">{item.name}</h2>
             <p className="text-gray-600">{item.description}</p>
             <p className="font-bold">R$ {item.price}</p>
@@ -120,6 +126,13 @@ export default function CartPage() {
                 <p className='font-bold p-2 border rounded-lg'> R$ {(item.price * quantities[item.id]).toFixed(2)}</p>
               </div>
           </div>
+          
+          </div>
+          
+          <img className="rounded-lg w-40 ml-10" src={item.image_url} alt={item.name} srcset="" />
+
+
+
           </div>
         ))}
       </div>
