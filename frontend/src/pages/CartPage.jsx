@@ -65,7 +65,7 @@ export default function CartPage() {
       quantity: quantities[item.id] || 1,
       subtotal: (item.price * (quantities[item.id] || 1)).toFixed(2)
     }));
-
+  
     const orderData = {
       total_price: total,
       status: 'pending',
@@ -73,7 +73,7 @@ export default function CartPage() {
       table_number: localStorage.getItem('tableNumber'),
       items: orderItems
     };
-
+  
     axios.post('http://localhost:3000/orders', orderData)
       .then(response => {
         console.log('Pedido criado com sucesso:', response.data);
@@ -89,8 +89,8 @@ export default function CartPage() {
   return (
     <div className="p-8">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold ml-20">Carrinho</h1>
-        <div className="flex justify-around gap-10 mr-20">
+        <h1 className="text-2xl font-bold ml-5">Carrinho</h1>
+        <div className="flex justify-around gap-10 mr-5">
           <Link to={"/menu"}>
           <h1 className="text-2xl font-bold mb-4 text-center text-blue-500 my-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-utensils">

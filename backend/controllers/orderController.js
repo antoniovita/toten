@@ -104,4 +104,29 @@ const getOrderById = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder, getOrderById};
+const getOrdersByTableNumber = async (req, res) => {
+  try {
+    const { table_number } = req.params;
+    const orders = await Order.findAll({
+      where: { table_number },
+      include: [
+        {
+          model: OrderItem,
+          as: 'items',
+          include: [
+            {
+              model: Product,
+              as: 'product'
+            }
+          ]
+        }
+      ]
+    });
+    res.json(orders);
+  } catch (error) {
+    console.error('Error fetching orders by table number', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder, getOrderById, getOrdersByTableNumber};

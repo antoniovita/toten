@@ -58,8 +58,8 @@ export default function MenuPage() {
   return (
     <div className="p-10">
       <div className="flex justify-between">
-        <h1 className="text-2xl font-bold ml-20">Menu</h1>
-        <div className="flex justify-around gap-10 mr-20">
+        <h1 className="text-2xl font-bold ml-5">Menu</h1>
+        <div className="flex justify-around gap-10 mr-5">
           <Link to={"/menu"}>
           <h1 className="text-2xl font-bold mb-4 text-center text-blue-500 my-1">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-utensils">
@@ -84,11 +84,7 @@ export default function MenuPage() {
         </div>
       </div>
 
-      <div className="mb-4">
-        <p className="text-lg ml-10">Bem-vindo, {name}! Você está na mesa {tableNumber}.</p>
-      </div>
-
-      <div className="mb-4 flex justify-center gap-4">
+      <div className="mb-4 flex justify-center gap-4 mt-5">
         <button onClick={() => handleFilterChange('Todos')} className={`px-4 py-2 rounded ${selectedCategory === 'Todos' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Todos</button>
         <button onClick={() => handleFilterChange('Hambúrguer')} className={`px-4 py-2 rounded ${selectedCategory === 'Hambúrguer' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Hambúrguer</button>
         <button onClick={() => handleFilterChange('Acompanhamento')} className={`px-4 py-2 rounded ${selectedCategory === 'Acompanhamento' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>Acompanhamento</button>

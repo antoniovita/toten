@@ -5,17 +5,19 @@ import MenuPage from './pages/MenuPage';
 import CartPage from './pages/CartPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import WelcomePage from './pages/WelcomePage';
+import OrderPage from './pages/OrderPage';
 
 function App() {
   return (
     <CartProvider>
       <Router>
         <ErrorBoundary>
-        <Routes>
-          <Route path="/menu" element={<MenuPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/" element={<WelcomePage />} />
-        </Routes>
+          <Routes>
+            <Route path="/" element={<WelcomePage />} />
+            <Route path="/menu" element={<MenuPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/order" element={<OrderPage />} />
+          </Routes>
         </ErrorBoundary>
       </Router>
     </CartProvider>
