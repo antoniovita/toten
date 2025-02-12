@@ -7,7 +7,7 @@ export default function MenuPage() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const { addToCart, updateCartQuantity } = useContext(CartContext);
+  const { addToCart, updateCartQuantity, cartItems } = useContext(CartContext);
   const [addedProductId, setAddedProductId] = useState(null);
   const [quantities, setQuantities] = useState({});
   const location = useLocation();
@@ -23,7 +23,8 @@ export default function MenuPage() {
   }, []);
 
   const handleAddToCart = (product) => {
-    const quantity = quantities[product.id] || 1;
+    const existingCartItem = cartItems.find(item => item.id === product.id);
+    const quantity = (existingCartItem ? existingCartItem.quantity : 0) + (quantities[product.id] || 1);
     addToCart(product);
     updateCartQuantity(product.id, quantity);
     setAddedProductId(product.id);
