@@ -5,12 +5,14 @@ const Product = require('./Product')(sequelize, DataTypes);
 const Order = require('./Order')(sequelize, DataTypes);
 const OrderItem = require('./OrderItem')(sequelize, DataTypes);
 const Table = require('./Table')(sequelize, DataTypes);
+const User = require('./User')(sequelize, DataTypes);
 
 const models = {
   Product,
   Order,
   OrderItem,
-  Table
+  Table,
+  User
 };
 
 Object.keys(models).forEach(modelName => {
@@ -30,5 +32,6 @@ module.exports = {
   Product,
   Order,
   OrderItem,
-  Table
+  Table,
+  User
 };

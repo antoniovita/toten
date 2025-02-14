@@ -5,6 +5,7 @@ const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const orderItemRoutes = require('./routes/orderItemRoutes');
 const tableRoutes = require('./routes/tableRoutes');
+const userRoutes = require('./routes/userRoutes')
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
 app.use('/orderItems', orderItemRoutes);
 app.use('/tables', tableRoutes);
+app.use('/auth' , userRoutes);
 
 sequelize.authenticate().then(() => {
     console.log('Conexão com o banco de dados estabelecida com sucesso.');

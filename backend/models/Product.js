@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define("Product", {
+  const Product = sequelize.define('Product', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -10,32 +10,36 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     description: {
-      type: DataTypes.TEXT
+      type: DataTypes.STRING,
+      allowNull: false
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false
     },
     image_url: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: true
     },
-    category: {
-      type: DataTypes.STRING
-    },
-    available: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'id'
+      }
     }
   }, {
-    tableName: "products",
-    timestamps: true
+    tableName: 'products',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
   });
 
   Product.associate = (models) => {
-    Product.hasMany(models.OrderItem, {
-      foreignKey: "product_id",
-      as: "orderItems",
-      onDelete: "CASCADE"
+    Product.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'user'
     });
   };
 
