@@ -6,6 +6,9 @@ import CartPage from './pages/CartPage';
 import ErrorBoundary from './components/ErrorBoundary';
 import WelcomePage from './pages/WelcomePage';
 import OrderPage from './pages/OrderPage';
+import LoginPage from './pages/LoginPage';
+import AdminPage from './pages/AdminPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (

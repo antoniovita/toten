@@ -7,10 +7,11 @@ const generateOrderNumber = () => {
 const createOrder = async (req, res) => {
   try {
     const { items, name, table_number } = req.body;
+    const user_id = req.params.user_id;
 
     let total_price = 0;
     const order_number = generateOrderNumber();
-    const order = await Order.create({ order_number, total_price, name, table_number });
+    const order = await Order.create({ order_number, total_price, name, table_number, user_id });
 
     for (let item of items) {
       const product = await Product.findByPk(item.product_id);
@@ -37,7 +38,9 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
+    const user_id = req.params.user_id;
     const orders = await Order.findAll({
+      where: { user_id },
       include: OrderItem,
     });
     res.json(orders);
@@ -67,14 +70,14 @@ const updateOrderStatus = async (req, res) => {
 };
 
 const deleteOrder = async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   const order = await Order.findByPk(id);
   if (!order) {
     return res.status(404).json({ error: "Pedido não encontrado." });
   }
   await order.destroy();
   res.json({ message: "Pedido deletado com sucesso" });
-}
+};
 
 const getOrderById = async (req, res) => {
   const { id } = req.params;
@@ -107,8 +110,9 @@ const getOrderById = async (req, res) => {
 const getOrdersByTableNumber = async (req, res) => {
   try {
     const { table_number } = req.params;
+    const user_id = req.params.user_id;
     const orders = await Order.findAll({
-      where: { table_number },
+      where: { table_number, user_id },
       include: [
         {
           model: OrderItem,
@@ -129,4 +133,4 @@ const getOrdersByTableNumber = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder, getOrderById, getOrdersByTableNumber};
+module.exports = { createOrder, getAllOrders, updateOrderStatus, deleteOrder, getOrderById, getOrdersByTableNumber };

@@ -1,11 +1,12 @@
-const express = require("express");
-const { getItemsByOrderId, createOrderItem, updateOrderItem, deleteOrderItem } = require("../controllers/orderItemController");
+const express = require('express');
+const { createOrderItem, getAllOrderItems, updateOrderItem, deleteOrderItem, getOrderItemById } = require('../controllers/orderItemController');
+const authenticateToken = require('../middlewares/auth');
+const router = express.Router({ mergeParams: true });
 
-const router = express.Router();
-
-router.get("/:orderId", getItemsByOrderId);
-router.post("/", createOrderItem);
-router.put("/:id", updateOrderItem);
-router.delete("/:id", deleteOrderItem);
+router.post('/', authenticateToken, createOrderItem);
+router.get('/', getAllOrderItems);
+router.put('/:id', authenticateToken, updateOrderItem);
+router.delete('/:id', authenticateToken, deleteOrderItem);
+router.get('/:id', getOrderItemById);
 
 module.exports = router;

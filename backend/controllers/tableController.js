@@ -1,45 +1,47 @@
-const { Table } = require('../models');
+const { Table } = require("../models");
 
-const getTableByNumber = async (req, res) => {
-  const { number } = req.params;
+const createTable = async (req, res) => {
   try {
-    const table = await Table.findOne({ where: { number } });
-    if (table) {
-      res.json({ exists: true });
-    } else {
-      res.json({ exists: false });
-    }
+    const { number } = req.body;
+    const user_id = req.params.user_id;
+    const table = await Table.create({ number, user_id });
+    res.status(201).json(table);
   } catch (error) {
-    console.error('Erro ao verificar número da mesa', error);
-    res.status(500).json({ error: 'Erro ao verificar número da mesa' });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao criar mesa" });
   }
 };
 
-const createTable = async (req, res) => {
-  const { number } = req.body;
+const getTableByNumber = async (req, res) => {
   try {
-    const table = await Table.create({ number });
-    res.status(201).json(table);
+    const { number } = req.params;
+    const user_id = req.params.user_id;
+    const table = await Table.findOne({ where: { number, user_id } });
+    if (table) {
+      res.json(table);
+    } else {
+      res.status(404).json({ error: "Mesa não encontrada" });
+    }
   } catch (error) {
-    console.error('Erro ao criar mesa', error);
-    res.status(500).json({ error: 'Erro ao criar mesa' });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao buscar mesa" });
   }
 };
 
 const deleteTable = async (req, res) => {
-  const { number } = req.params;
   try {
-    const table = await Table.findOne({ where: { number } });
-    if (table) {
-      await table.destroy();
-      res.status(204).end();
-    } else {
-      res.status(404).json({ error: 'Mesa não encontrada' });
+    const { number } = req.params;
+    const user_id = req.params.user_id;
+    const table = await Table.findOne({ where: { number, user_id } });
+    if (!table) {
+      return res.status(404).json({ error: "Mesa não encontrada" });
     }
+    await table.destroy();
+    res.json({ message: "Mesa deletada com sucesso" });
   } catch (error) {
-    console.error('Erro ao deletar mesa', error);
-    res.status(500).json({ error: 'Erro ao deletar mesa' });
+    console.error(error);
+    res.status(500).json({ error: "Erro ao deletar mesa" });
   }
 };
 
-module.exports = { getTableByNumber, createTable, deleteTable };
+module.exports = { createTable, getTableByNumber, deleteTable };
