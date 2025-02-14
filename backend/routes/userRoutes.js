@@ -22,7 +22,7 @@ router.post('/loginUsername', async (req, res) => {
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(400).json({ message: 'Credenciais inválidas' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compareSync(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Credenciais inválidas' });
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
@@ -39,7 +39,7 @@ router.post('/loginEmail', async (req, res) => {
       const user = await User.findOne({ where: { email } });
       if (!user) return res.status(400).json({ message: 'Credenciais inválidas' });
   
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compareSync(password, user.password);
       if (!isMatch) return res.status(400).json({ message: 'Credenciais inválidas' });
   
       const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
